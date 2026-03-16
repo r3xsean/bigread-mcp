@@ -4,42 +4,34 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { readFileSync } from "fs";
 
-const CHAR_LIMIT = 40_000; // safe margin under 50K persisted-output threshold
+const CHAR_LIMIT = 40_000;
 
-const server = new McpServer({ name: "bigread-mcp", version: "1.0.0" });
+const server = new McpServer({ name: "bigread-mcp", version: "1.0.1" });
 
 server.tool(
   "bigread",
-  "Returns chunk offsets and limits for reading a large file with Claude Code's Read tool without triggering output truncation. Does not return file content — just the reading plan. Call this when a Read tool result shows 'Output too large' with a persisted-output tag.",
+  "Returns chunk offsets and limits for reading a large file with Claude Code's Read tool without triggering output truncation. Does not return file content — just the reading plan.",
   { filePath: z.string().describe("Absolute path to the file") },
   async ({ filePath }) => {
     const content = readFileSync(filePath, "utf-8");
     const lines = content.split("\n");
-    const totalChars = content.length;
     const totalLines = lines.length;
+    const totalChars = content.length;
 
-    // If the file fits in one read, say so
     if (totalChars <= CHAR_LIMIT) {
       return {
         content: [{
           type: "text",
-          text: JSON.stringify({
-            totalLines,
-            totalChars,
-            fits: true,
-            message: "File fits in a single Read call — no chunking needed.",
-          }, null, 2),
+          text: JSON.stringify({ fits: true }),
         }],
       };
     }
 
-    const charsPerLine = totalChars / totalLines;
-    const linesPerChunk = Math.floor(CHAR_LIMIT / charsPerLine);
-
+    const linesPerChunk = Math.floor(CHAR_LIMIT / (totalChars / totalLines));
     const chunks = [];
     for (let i = 0; i < totalLines; i += linesPerChunk) {
       chunks.push({
-        offset: i + 1, // Read tool uses 1-based line numbers
+        offset: i + 1,
         limit: Math.min(linesPerChunk, totalLines - i),
       });
     }
@@ -47,13 +39,7 @@ server.tool(
     return {
       content: [{
         type: "text",
-        text: JSON.stringify({
-          totalLines,
-          totalChars,
-          charsPerLine: Math.round(charsPerLine),
-          linesPerChunk,
-          chunks,
-        }, null, 2),
+        text: JSON.stringify(chunks),
       }],
     };
   }
