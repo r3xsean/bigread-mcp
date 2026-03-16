@@ -39,7 +39,7 @@ server.tool(
     return {
       content: [{
         type: "text",
-        text: JSON.stringify(chunks),
+        text: JSON.stringify({ totalLines, chunks }),
       }],
     };
   }
