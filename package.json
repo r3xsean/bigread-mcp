@@ -1,0 +1,36 @@
+{
+  "name": "bigread-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that calculates optimal chunk offsets for reading large files in Claude Code without triggering output truncation. Fixes the 'Output too large' / persisted-output problem.",
+  "type": "module",
+  "bin": {
+    "bigread-mcp": "index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "mcp",
+    "claude-code",
+    "large-files",
+    "file-reading",
+    "chunking",
+    "model-context-protocol",
+    "output-too-large",
+    "persisted-output",
+    "truncation",
+    "file-truncation",
+    "bigread"
+  ],
+  "author": "r3xsean",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/r3xsean/bigread-mcp.git"
+  },
+  "homepage": "https://github.com/r3xsean/bigread-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.4"
+  }
+}
