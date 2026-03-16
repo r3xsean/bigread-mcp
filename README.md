@@ -9,7 +9,7 @@ When Claude Code reads a file larger than ~50K characters, the `persisted-output
 ## Install
 
 ```bash
-claude mcp add --transport stdio --scope user bigread -- npx -y bigread-mcp
+claude mcp add --transport stdio --scope user bigread -- npx -y github:r3xsean/bigread-mcp
 ```
 
 One command. Works on Windows, macOS, and Linux.
